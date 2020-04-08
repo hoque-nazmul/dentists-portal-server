@@ -13,11 +13,11 @@ let client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: t
 
 
 app.post('/addTreatments', (req, res) => {
-
+    const treatments = req.body;
     client = new MongoClient(uri, { useNewUrlParser: true });
     client.connect(err => {
-        const collection = client.db("test").collection("devices");
-        collection.insert(users, (error, result) => {
+        const collection = client.db("dentistsPortal").collection("treatments");
+        collection.insert(treatments, (error, result) => {
             if(error) {
                 console.log(error);
                 res.status(500).send({ message:error });
