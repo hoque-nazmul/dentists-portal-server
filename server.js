@@ -49,6 +49,25 @@ app.post('/addAppointment', (req, res) => {
     });
 });
 
+// Insert an Prescrition from Doctors
+app.post('/addPrescription', (req, res) => {
+    const prescriptions = req.body;
+    client = new MongoClient(uri, { useNewUrlParser: true });
+    client.connect(err => {
+        const collection = client.db("dentistsPortal").collection("prescriptions");
+        collection.insertOne(prescriptions, (error, result) => {
+            if(error) {
+                console.log(error);
+                res.status(500).send({ message:error });
+            }
+            else{
+                res.send(result.ops[0]);
+            }
+        })
+        client.close();
+    });
+});
+
 // Getting all Treatments
 app.get('/getTreatments', (req, res) => {
     client = new MongoClient(uri, { useNewUrlParser: true });
