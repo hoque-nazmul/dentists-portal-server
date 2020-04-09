@@ -49,11 +49,29 @@ app.post('/addAppointment', (req, res) => {
     });
 });
 
-// Getting all treatment options from database
+// Getting all Treatments
 app.get('/getTreatments', (req, res) => {
     client = new MongoClient(uri, { useNewUrlParser: true });
     client.connect(err => {
         const collection = client.db("dentistsPortal").collection("treatments");
+        collection.find().toArray((error, documents) => {
+            if(error) {
+                console.log(error);
+                res.status(500).send({ message:error });
+            }
+            else{
+                res.send(documents);
+            }
+        })
+        client.close();
+    });
+});
+
+// Getting all Appointments 
+app.get('/getAppointments', (req, res) => {
+    client = new MongoClient(uri, { useNewUrlParser: true });
+    client.connect(err => {
+        const collection = client.db("dentistsPortal").collection("appointments");
         collection.find().toArray((error, documents) => {
             if(error) {
                 console.log(error);
@@ -86,9 +104,8 @@ app.post('/appointmentsByDate', (req, res) => {
     });
 });
 
+// Root Api
 app.get('/', (req, res) => res.send("Hello World!"));
-
-
 
 // app.post('/appointmentsByToday', (req, res) => {
 //     const today = req.body.today;
