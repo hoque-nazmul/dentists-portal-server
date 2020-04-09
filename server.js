@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 const uri = process.env.DB_PATH;
 let client = new MongoClient(uri, { useNewUrlParser: true });
 
-
+// Adding All Treatments from Client
 app.post('/addTreatments', (req, res) => {
     const treatments = req.body;
     client = new MongoClient(uri, { useNewUrlParser: true });
@@ -30,6 +30,7 @@ app.post('/addTreatments', (req, res) => {
     });
 });
 
+// Insert an Appointment from client
 app.post('/addAppointment', (req, res) => {
     const appointments = req.body;
     client = new MongoClient(uri, { useNewUrlParser: true });
@@ -48,6 +49,7 @@ app.post('/addAppointment', (req, res) => {
     });
 });
 
+// Getting all treatment options from database
 app.get('/getTreatments', (req, res) => {
     client = new MongoClient(uri, { useNewUrlParser: true });
     client.connect(err => {
@@ -65,8 +67,46 @@ app.get('/getTreatments', (req, res) => {
     });
 });
 
+// Getting Appointments by selected Date
+app.post('/appointmentsByDate', (req, res) => {
+    const clickedDate = req.body.localDate;
+    client = new MongoClient(uri, { useNewUrlParser: true });
+    client.connect(err => {
+        const collection = client.db("dentistsPortal").collection("appointments");
+        collection.find({ date : clickedDate }).toArray((error, documents) => {
+            if(error) {
+                console.log(error);
+                res.status(500).send({ message:error });
+            }
+            else{
+                res.send(documents);
+            }
+        })
+        client.close();
+    });
+});
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.get('/', (req, res) => res.send("Hello World!"));
+
+
+
+// app.post('/appointmentsByToday', (req, res) => {
+//     const today = req.body.today;
+//     client = new MongoClient(uri, { useNewUrlParser: true });
+//     client.connect(err => {
+//         const collection = client.db("dentistsPortal").collection("appointments");
+//         collection.find({ date : today }).toArray((error, documents) => {
+//             if(error) {
+//                 console.log(error);
+//                 res.status(500).send({ message:error });
+//             }
+//             else{
+//                 res.send(documents);
+//             }
+//         })
+//         client.close();
+//     });
+// });
 
 const port = process.env.PORT || 4200;
 
