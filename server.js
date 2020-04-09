@@ -104,6 +104,24 @@ app.get('/getAppointments', (req, res) => {
     });
 });
 
+// Getting all Prescriptions 
+app.get('/getPrescription', (req, res) => {
+    client = new MongoClient(uri, { useNewUrlParser: true });
+    client.connect(err => {
+        const collection = client.db("dentistsPortal").collection("prescriptions");
+        collection.find().toArray((error, documents) => {
+            if(error) {
+                console.log(error);
+                res.status(500).send({ message:error });
+            }
+            else{
+                res.send(documents);
+            }
+        })
+        client.close();
+    });
+});
+
 // Getting Appointments by selected Date
 app.post('/appointmentsByDate', (req, res) => {
     const clickedDate = req.body.localDate;
